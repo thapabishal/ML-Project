@@ -79,6 +79,8 @@ def evaluate_models(X_train, y_train,X_test,y_test,models,param):
 
             report[list(models.keys())[i]] = test_model_score
 
+            print(f"✅ Training Complete for Model: {list(models.keys())[i]}.")
+
         return report
     
 
