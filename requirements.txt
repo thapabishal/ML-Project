@@ -7,4 +7,8 @@ ipykernel
 
 catboost
 xgboost
+
+psycopg2
+python-dotenv
+
 -e .
