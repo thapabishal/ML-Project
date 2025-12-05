@@ -11,4 +11,6 @@ xgboost
 psycopg2
 python-dotenv
 
+flask
+dill
 -e .

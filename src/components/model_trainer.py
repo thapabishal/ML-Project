@@ -17,10 +17,8 @@ from urllib.parse import urlparse
 from src.exception import CustomException
 from src.logger import logging
 from src.utils import evaluate_models, save_object
-# import mlflow
-
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import numpy as np 
+import numpy as np
 
 
 @dataclass
@@ -130,21 +128,12 @@ class ModelTrainer:
                 f"Best model is : {best_model_name} with r2 score: {best_model_score}"
             )
 
-            # model_names = list(params.keys())
+            if best_model_score < 0.6:
+                raise CustomException("No best model found")
 
-            # actual_model = ""
-
-            # for model in model_names:
-            #     if best_model_name == model:
-            #         actual_model = actual_model + model
-
-            # best_params = params[actual_model]
-
-            # mlflow.set_tracking_uri("https://dagshub.com/thapabishal/Data-Science-Project.mlflow")
-
-            # # tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-            # mlflow.autolog()
-
+            logging.info(
+                f"Best model found: {best_model_name} with r2 score: {best_model_score}"
+            )
 
             # Train the best model
             best_model.fit(X_train, y_train)
@@ -153,39 +142,7 @@ class ModelTrainer:
             predicted = best_model.predict(X_test)
             rmse, mae, r2 = self.eval_metrics(y_test, predicted)
 
-            # Log custom metrics (optional, because autolog won’t do RMSE/MAE)
-            # mlflow.log_metric("rmse", rmse)
-            # mlflow.log_metric("mae", mae)
-            # mlflow.log_metric("r2", r2)
-            # mlflow tuning done here
-            # with mlflow.start_run():
-            #     predicted_qualities = best_model.predict(X_test)
-            #     (rmse, mae, r2) = self.eval_metrics(y_test, predicted_qualities)
 
-            #     mlflow.log_params(best_params)
-
-            #     mlflow.log_metric("rmse", rmse)
-            #     mlflow.log_metric("r2", r2)
-            #     mlflow.log_metric("mae", mae)
-
-            # # model registry does not work with file store, so saving the model without registering
-            # if tracking_url_type_store != "file":
-            #     # Register the model
-            #     # There are other ways to use the Model Registry, which depends on the
-            #     # please refer to the doc for more information:
-            #     # https://mlflow.org/docs/latest/model-registry.html#api-workflow
-            #     mlflow.sklearn.log_model(
-            #         best_model, "model", registered_model_name=actual_model
-            #     )
-            # else:
-            #     mlflow.sklearn.log_model(best_model, "model")
-
-            if best_model_score < 0.6:
-                raise CustomException("No best model found")
-
-            logging.info(
-                f"Best model found: {best_model_name} with r2 score: {best_model_score}"
-            )
 
             # Saving the best model
             save_object(
