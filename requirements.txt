@@ -10,7 +10,7 @@ flask
 dill
 psycopg2-binary
 python-dotenv
-netlify-lambda
+netlify-lambda-py
 
 
 #matplotlib
