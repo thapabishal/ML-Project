@@ -1,14 +1,10 @@
 [build]
-  # Netlify will run this command to install dependencies
   command = "pip install -r requirements.txt"
-  # Directory where Netlify will find the HTML templates
   publish = "templates" 
   
 [functions]
-  # We can remove node_bundler = "zip" since we are using Python
   directory = "functions"
 
-# CRITICAL FIX: Must be double brackets for a list of redirects
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/server"
