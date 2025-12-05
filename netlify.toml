@@ -8,6 +8,7 @@
 [functions]
   # Tell Netlify that the functions are Python functions
   node_bundler = "zip"
+  directory = "functions"
   
 # This is the crucial routing part: redirect all requests to your Flask function
 [[redirects]]
