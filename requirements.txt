@@ -1,16 +1,19 @@
+# --- ML Core ---
 pandas
 numpy
-matplotlib
-seaborn
 scikit-learn
-ipykernel
-
-catboost
 xgboost
+catboost
 
-psycopg2-binary
-python-dotenv
-
+# --- Deployment Core ---
 flask
 dill
--e .
+psycopg2-binary
+python-dotenv
+netlify-lambda
+
+
+#matplotlib
+#seaborn
+# ipykernel
+#-e .
