@@ -1,0 +1,16 @@
+[build]
+  # Netlify will run this command to install dependencies
+  command = "pip install -r requirements.txt"
+  # Since Netlify is using a redirect, we don't strictly need a publish directory, 
+  # but setting it to a dummy location prevents errors.
+  publish = "templates" 
+  
+[functions]
+  # Tell Netlify that the functions are Python functions
+  node_bundler = "zip"
+  
+# This is the crucial routing part: redirect all requests to your Flask function
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200

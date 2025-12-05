@@ -15,15 +15,15 @@ app = application
 
 
 @app.route("/")
-def index():
-    return render_template('home.html', results=None)
+def home():
+    return render_template("home.html", results=None)
 
 
 @app.route("/predictdata", methods=["GET", "POST"])
 def predict_datapoint():
     if request.method == "GET":
         # Render the form on GET, passing 'results=None'
-        return render_template("home.html", results = None, form_data=request.form)
+        return render_template("home.html", results=None, form_data=request.form)
 
     else:
         try:
@@ -68,4 +68,4 @@ def predict_datapoint():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000,  debug=True)
+    app.run(debug=True)
