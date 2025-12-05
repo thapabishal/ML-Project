@@ -1,9 +1,10 @@
-# File: functions/server.py
-
-from netlify_lambda import handler
+import awsgi
+# Import your Flask app instance
 from app import app 
 
-# This function is the entry point for Netlify's serverless environment.
-def server(event, context):
-    # Pass the event/context and the Flask app instance to the handler
-    return handler(event, context, app)
+
+# It receives the AWS Lambda event and context objects.
+def handler(event, context):
+    # awsgi converts the Lambda event into a standard WSGI request 
+    # and converts Flask's response back into a Lambda response.
+    return awsgi.response(app, event, context)
