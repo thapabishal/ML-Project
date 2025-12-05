@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Score Prediction base on habits</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+
+        /* --- NEW DEVELOPER FOOTER STYLES --- */
+        .project-footer {
+            padding: 30px 0 10px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            max-width: 1400px;
+            margin: 40px auto 0 auto; /* Add space between main card and footer */
+            width: 100%;
+        }
+        .dev-info strong {
+            color: var(--text-main);
+        }
+        .social-links {
+            margin-top: 10px;
+        }
+        .social-icon {
+            display: inline-block;
+            color: var(--primary); /* Uses brand color */
+            font-size: 1.6rem; /* Slightly larger size */
+            margin: 0 15px;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        /* Animation: Lift and Grow on Hover */
+        .social-icon:hover {
+            color: var(--primary-hover);
+            transform: scale(1.2) translateY(-3px); 
+            filter: drop-shadow(0 0 5px var(--primary)); /* Subtle glow on hover */
+        }
+        /* Ensure links are white in dark mode and dark in light mode */
+        .social-icon:focus {
+            outline: none;
+        }
+
+
+        /* --- THEME CONFIGURATION --- */
+        :root {
+            --primary: #6366f1; 
+            --primary-hover: #4f46e5;
+            --secondary: #64748B;
+            
+            --radius-card: 20px;
+            --radius-input: 10px;
+            
+            /* START: FONT DEFINITION */
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+            /* END: FONT DEFINITION */
+        }
+        /* LIGHT MODE */
+        [data-bs-theme="light"] {
+            --bg-color: #F8FAFC; 
+            --bg-gradient: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: 1px solid rgba(226, 232, 240, 0.8);
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --input-bg: #FFFFFF;
+            --input-border: #CBD5E1;
+            --grid-line: rgba(99, 102, 241, 0.08); 
+            --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            --modal-bg: #FFFFFF;
+        }
+
+        /* DARK MODE */
+        [data-bs-theme="dark"] {
+            --bg-color: #0F172A; 
+            --bg-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --card-border: 1px solid rgba(255, 255, 255, 0.08);
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: rgba(148, 163, 184, 0.2);
+            --grid-line: rgba(129, 140, 248, 0.1); 
+            --shadow-card: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+            --modal-bg: #1E293B;
+        }
+
+        /* --- GLOBAL & BASE STYLES --- */
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-color);
+            background-image: var(--bg-gradient);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* Applying heading font to key elements */
+        .main-title, h2, h3, .result-number {
+            font-family: var(--font-heading);
+        }
+
+        fieldset {
+            border: 1px solid var(--input-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        
+        
+        legend {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #FFFFFF;
+            background-color: var(--primary);
+            border-radius: 8px;
+            padding: 2px 12px;
+            position: absolute;
+            top: 0;
+            left: 15px;
+            transform: translateY(-50%);
+            width: auto;
+            border: none;
+            margin-bottom: 0;
+            box-shadow: 0 3px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: var(--card-border);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 2.5rem; 
+            height: 100%;
+        }
+
+        .form-control[readonly] {
+            opacity: 0.8;
+            background-color: rgba(99, 102, 241, 0.1); 
+            border-color: var(--primary);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* 1. PREDICT BUTTON STYLES */
+        .btn-primary-custom {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-input);
+            padding: 12px 24px;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        @keyframes subtlePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.01); }
+            100% { transform: scale(1); }
+        }
+        .btn-primary-custom:focus {
+            animation: subtlePulse 0.5s ease-in-out;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5);
+        }
+
+
+        /* 2. RIGHT PANEL STYLES - HYPNOTIC CORE FOCUS */
+        .right-panel {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            min-height: 500px;
+            background: rgba(99, 102, 241, 0.05); 
+            border: 1px dashed var(--primary); 
+        }
+
+        /* Remove old background shifting matrix and old pulse rings */
+        .right-panel::before {
+            content: none !important; /* Force remove unwanted background gradient */
+        }
+
+        /* 1. Centralized Core Plasma Pulse (Mindboggling Centerpiece) - ENHANCED */
+        .right-panel::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            /* Added subtle rotation to the plasma core itself */
+            animation: corePulse 3s infinite alternate ease-in-out, coreRotate 12s linear infinite; 
+            z-index: 1;
+            
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            /* Brilliant, breathing plasma core effect */
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.9) 0%, rgba(99, 102, 241, 0) 70%);
+            box-shadow: 0 0 60px 20px var(--primary); /* Stronger initial glow */
+        }
+
+        @keyframes corePulse {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; box-shadow: 0 0 50px 20px var(--primary); }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; box-shadow: 0 0 100px 40px var(--primary); }
+        }
+
+        /* 2. Hypnotic Concentric Ring (New Element Structure) */
+        .core-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50%;
+            animation: ringSpin 20s linear infinite; /* Slow spin */
+            z-index: 0;
+        }
+
+        .core-ring::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; /* To cover the initial border */
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px dotted rgba(99, 102, 241, 0.15);
+            transform: scale(0.75);
+            animation: ringSpin 15s reverse linear infinite; /* Faster reverse spin */
+        }
+        
+        @keyframes ringSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes coreRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+
+        /* 3. THEME TOGGLE STYLES */
+        #themeToggleContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        .toggle-switch {
+            width: 60px;
+            height: 30px;
+            background-color: var(--primary);
+            border-radius: 15px;
+            cursor: pointer;
+            display: block;
+            position: relative;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #f7f7f7;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .toggle-icon {
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        /* Initial state (Dark Mode) */
+        .moon-icon { color: #f7f7f7; }
+        .sun-icon { color: transparent; }
+
+        /* Checked state (Light Mode) */
+        #themeToggleCheckbox:checked + #themeToggleLabel {
+            background-color: #FFC107;
+        }
+        #themeToggleCheckbox:checked + #themeToggleLabel::before {
+            transform: translateX(30px);
+            background-color: #FFFFFF;
+        }
+        #themeToggleCheckbox:checked + #themeToggleLabel .sun-icon {
+            color: var(--text-main);
+        }
+        #themeToggleCheckbox:checked + #themeToggleLabel .moon-icon {
+            color: transparent;
+        }
+        .sun-icon { position: absolute; left: 8px; }
+        .moon-icon { position: absolute; right: 8px; }
+
+        /* Modal Glow */
+        .result-circle {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0%, transparent 0);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            box-shadow: 0 0 0px 5px rgba(99, 102, 241, 0.1); 
+            transition: box-shadow 0.5s ease-in-out;
+        }
+        .result-circle-glow {
+            box-shadow: 
+                0 0 10px var(--glow-color), 
+                0 0 20px var(--glow-color), 
+                0 0 40px var(--glow-color),
+                0 0 80px var(--glow-color); 
+        }
+        .result-circle::before {
+            content: ''; position: absolute; width: 120px; height: 120px;
+            border-radius: 50%; background: var(--modal-bg);
+        }
+        .result-number {
+            position: relative; z-index: 2;
+            font-family: var(--font-heading);
+            font-size: 3rem; font-weight: 800; color: var(--primary);
+        }
+    </style>
+</head>
+<body data-bs-theme="dark">
+
+    <div id="background-animation"></div>
+
+    <div id="themeToggleContainer">
+        <input type="checkbox" id="themeToggleCheckbox" class="d-none">
+        <label for="themeToggleCheckbox" class="toggle-switch" id="themeToggleLabel">
+            <span class="toggle-track">
+                <i class="fas fa-sun toggle-icon sun-icon"></i>
+                <i class="fas fa-moon toggle-icon moon-icon"></i>
+            </span>
+        </label>
+    </div>
+    <div class="container-fluid" style="max-width: 1400px;">
+        <div class="row g-4 align-items-stretch">
+            
+            <div class="col-lg-7">
+                <div class="glass-card">
+                    
+                    <div class="app-header">
+                        <h1 class="main-title">Habit-Based Score Analyzer</h1>
+                        <p class="subtitle">14-Feature Academic Performance Predictor</p>
+                    </div>
+
+                    <form id="forecastingForm">
+                        
+                        <fieldset>
+                            <legend><i class="fas fa-user-circle me-2"></i>Profile & Academic</legend>
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <label for="user_name" class="form-label">Student Name</label>
+                                    <input type="text" class="form-control" id="user_name" placeholder="Enter Name (Not mandatory)">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="age" class="form-label"><i class="fas fa-birthday-cake"></i> Age (Years)</label>
+                                    <input type="number" class="form-control" id="age" value="20" min="15" max="60" step="any" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="gender" class="form-label"><i class="fas fa-venus-mars"></i> Gender</label>
+                                    <select class="form-select" id="gender" required>
+                                        <option value="Female">Female</option>
+                                        <option value="Male" selected>Male</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="attendance_percentage" class="form-label"><i class="fas fa-percent"></i> Attendance (%)</label>
+                                    <input type="number" class="form-control" id="attendance_percentage" value="90" min="0" max="100" step="any" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="part_time_job" class="form-label"><i class="fas fa-briefcase"></i> Part-Time Job</label>
+                                    <select class="form-select" id="part_time_job" required>
+                                        <option value="No" selected>No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="parental_education_level" class="form-label"><i class="fas fa-user-tie"></i> Parental Ed. Level</label>
+                                    <select class="form-select" id="parental_education_level" required>
+                                        <option value="Master">Master</option>
+                                        <option value="High School">High School</option>
+                                        <option value="Bachelor" selected>Bachelor</option>
+                                        <option value="unknown">unknown</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="internet_quality" class="form-label"><i class="fas fa-wifi"></i> Internet Quality</label>
+                                    <select class="form-select" id="internet_quality" required>
+                                        <option value="Average" selected>Average</option>
+                                        <option value="Poor">Poor</option>
+                                        <option value="Good">Good</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend><i class="fas fa-clock me-2"></i>Habits & Media</legend>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="study_hours_per_day" class="form-label"><i class="fas fa-book-reader"></i> Study (Hrs/Day)</label>
+                                    <input type="number" class="form-control calculation-source" id="study_hours_per_day" value="3.5" min="0" max="24" step="any" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sleep_hours" class="form-label"><i class="fas fa-bed"></i> Sleep (Hours)</label>
+                                    <input type="number" class="form-control calculation-source" id="sleep_hours" value="7.5" min="0" max="15" step="any" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="social_media_hours" class="form-label"><i class="fab fa-instagram"></i> Social Media (Hrs/Day)</label>
+                                    <input type="number" class="form-control calculation-source" id="social_media_hours" value="1.5" min="0" max="24" step="any" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="netflix_hours" class="form-label"><i class="fas fa-tv"></i> Netflix/Streaming (Hrs/Day)</label>
+                                    <input type="number" class="form-control calculation-source" id="netflix_hours" value="1.0" min="0" max="24" step="any" required>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend><i class="fas fa-heartbeat me-2"></i>Wellness & Lifestyle</legend>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="exercise_frequency" class="form-label"><i class="fas fa-dumbbell"></i> Exercise (Days/Week)</label>
+                                    <input type="number" class="form-control" id="exercise_frequency" value="3" min="0" max="7" step="any" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="mental_health_rating" class="form-label"><i class="fas fa-brain"></i> Mental Health (1-10)</label>
+                                    <input type="number" class="form-control" id="mental_health_rating" value="7" min="1" max="10" step="any" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="extracurricular_participation" class="form-label"><i class="fas fa-running"></i> Extracurricular</label>
+                                    <select class="form-select" id="extracurricular_participation" required>
+                                        <option value="Yes" selected>Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="diet_quality" class="form-label"><i class="fas fa-apple-alt"></i> Diet Quality</label>
+                                    <select class="form-select" id="diet_quality" required>
+                                        <option value="Fair">Fair</option>
+                                        <option value="Good" selected>Good</option>
+                                        <option value="Poor">Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend><i class="fas fa-calculator me-2"></i>Calculated Metrics</legend>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="total_screen_time" class="form-label"><i class="fas fa-mobile-alt"></i> Total Screen Time (Hrs/Day)</label>
+                                    <input type="text" class="form-control" id="total_screen_time" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="study_sleep_ratio" class="form-label"><i class="fas fa-balance-scale"></i> Study/Sleep Ratio</label>
+                                    <input type="text" class="form-control" id="study_sleep_ratio" readonly>
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+                        <button type="submit" class="btn btn-primary-custom btn-lg mt-2" id="predictButton">
+                            Analyze & Predict <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-none d-lg-block">
+            <div class="glass-card right-panel">
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring"></div>
+                
+                <div style="z-index: 2; margin-top: 2rem;">
+                    <h2 style="font-weight: 800; font-size: 2rem; color: var(--primary);">Data Driven</h2>
+                    
+                    <p style="color: var(--text-muted); max-width: 300px; margin: 0 auto;">
+                        Predicting academic success with <span class="fw-bold">89.7% precision</span>. We analyze <span class="fw-bold">14 core inputs</span> and <span class="fw-bold">2 calculated metrics</span> using a Linear Regression model.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 text-center">
+                <div class="modal-header border-0 pb-0 justify-content-center">
+                    <h3 class="fw-bold text-uppercase" style="color: var(--primary); letter-spacing: 2px;">Prediction Score</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="lead mb-4">Hello <strong id="modalUserName"><b>Student</b></strong>, based on your data:</p>
+                    
+                    <div class="result-circle">
+                        <span class="result-number" id="finalScore">--</span>
+                    </div>
+                    
+                    <h4 class="mt-3 fw-bold" id="performanceText">--</h4>
+                    <p class="text-muted" id="modalMessage">Analyzing patterns...</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Adjust Data</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" onclick="location.reload()">New Prediction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('forecastingForm');
+            const body = document.body;
+            const modalElement = document.getElementById('resultModal');
+            const resultModal = new bootstrap.Modal(modalElement);
+            // --- 1. THEME TOGGLE LOGIC ---
+            const themeToggleCheckbox = document.getElementById('themeToggleCheckbox');
+            
+            function setTheme(isDark) {
+                const theme = isDark ? 'dark' : 'light';
+                body.setAttribute('data-bs-theme', theme);
+                localStorage.setItem('theme', theme);
+                themeToggleCheckbox.checked = !isDark;
+            }
+            const savedTheme = localStorage.getItem('theme');
+            const initialIsDark = (savedTheme === null) ? true : (savedTheme === 'dark');
+            setTheme(initialIsDark);
+
+            themeToggleCheckbox.addEventListener('change', () => {
+                const isDark = !themeToggleCheckbox.checked; 
+                setTheme(isDark);
+            });        
+            // --- 2. REAL-TIME CALCULATIONS ---
+            const studyInput = document.getElementById('study_hours_per_day');
+            const sleepInput = document.getElementById('sleep_hours');
+            const socialMediaInput = document.getElementById('social_media_hours');
+            const netflixInput = document.getElementById('netflix_hours');
+            const screenTimeOutput = document.getElementById('total_screen_time');
+            const studySleepRatioOutput = document.getElementById('study_sleep_ratio');
+            
+            function updateCalculations() {
+                const study = parseFloat(studyInput.value) || 0;
+                const sleep = parseFloat(sleepInput.value) || 0;
+                const socialMedia = parseFloat(socialMediaInput.value) || 0;
+                const netflix = parseFloat(netflixInput.value) || 0;
+
+                const totalScreenTime = (socialMedia + netflix).toFixed(1);
+                
+                let ratio = 'N/A';
+                if (study > 0 && sleep > 0) {
+                    ratio = (study / sleep).toFixed(2);
+                } else if (study > 0 && sleep === 0) {
+                    ratio = 'Infinite';
+                } else if (study === 0 && sleep > 0) {
+                    ratio = '0.00';
+                }
+                
+                screenTimeOutput.value = totalScreenTime + " Hrs";
+                studySleepRatioOutput.value = ratio;
+            }
+
+            document.querySelectorAll('.calculation-source').forEach(input => {
+                input.addEventListener('input', updateCalculations);
+            });
+            
+            updateCalculations();
+
+
+            // --- 3. PREDICTION LOGIC (Mockup) ---
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('user_name').value;
+                document.getElementById('modalUserName').textContent = name || 'Student';
+
+                const study_hours_per_day = parseFloat(studyInput.value);
+                const social_media_hours = parseFloat(socialMediaInput.value);
+                const netflix_hours = parseFloat(netflixInput.value);
+                const attendance_percentage = parseFloat(document.getElementById('attendance_percentage').value);
+                const sleep_hours = parseFloat(sleepInput.value);
+                const exercise_frequency = parseFloat(document.getElementById('exercise_frequency').value);
+                const mental_health_rating = parseFloat(document.getElementById('mental_health_rating').value);
+                
+                const diet_quality = document.getElementById('diet_quality').value;
+                const part_time_job = document.getElementById('part_time_job').value;
+                const parental_education_level = document.getElementById('parental_education_level').value;
+                const internet_quality = document.getElementById('internet_quality').value;
+                const extracurricular_participation = document.getElementById('extracurricular_participation').value;
+                
+                const total_screen_time = social_media_hours + netflix_hours;
+                const study_sleep_ratio = sleep_hours > 0 ? (study_hours_per_day / sleep_hours) : 0; 
+                
+                const diet_quality_weight = diet_quality === 'Good' ? 1 : (diet_quality === 'Fair' ? 0.5 : 0);
+                const part_time_job_weight = part_time_job === 'No' ? 1 : 0;
+                const internet_quality_weight = internet_quality === 'Good' ? 1 : (internet_quality === 'Average' ? 0.5 : 0);
+                const parental_education_weight = parental_education_level === 'Master' ? 1 : (parental_education_level === 'Bachelor' ? 0.5 : 0);
+                const extracurricular_weight = extracurricular_participation === 'Yes' ? 1 : 0;
+
+
+                let score = 0;
+
+                score += attendance_percentage * 0.25; 
+                score += study_hours_per_day * 3; 
+                score += sleep_hours * 2;         
+                score += exercise_frequency * 1.5;
+                score += mental_health_rating * 1.5;
+                
+                score -= total_screen_time * 2.5; 
+                
+                score += study_sleep_ratio * 5; 
+                
+                score += diet_quality_weight * 5;
+                score += part_time_job_weight * 2;
+                score += parental_education_weight * 8;
+                score += internet_quality_weight * 3;
+                score += extracurricular_weight * 2;
+                score = Math.min(100, Math.round(score));
+                score = Math.max(0, score);
+
+
+                // --- MODAL ANIMATION & DISPLAY ---
+                resultModal.show();
+                
+                const scoreEl = document.getElementById('finalScore');
+                const perfText = document.getElementById('performanceText');
+                const msgText = document.getElementById('modalMessage');
+                const resultCircle = document.querySelector('.result-circle');
+
+                resultCircle.classList.remove('result-circle-glow');
+                resultCircle.style.setProperty('--glow-color', 'transparent'); 
+                
+                let current = 0;
+                const timer = setInterval(() => {
+                    current += 1;
+                    scoreEl.textContent = current;
+                    resultCircle.style.background = 
+                        `conic-gradient(var(--primary) ${current}%, transparent 0)`;
+                    
+                    if(current >= score) {
+                        clearInterval(timer);
+                        
+                        // Define the element for the glowing effect
+                        const resultCircle = document.querySelector('.result-circle'); 
+                        
+                        // Final Text and GLOW Logic
+                        if(score >= 85) { 
+                            perfText.textContent = "Elite Potential";
+                            perfText.style.color = "#059669"; // Emerald Green
+                            msgText.textContent = "Outstanding performance! Continue to focus on deep conceptual learning and time management.";
+                            
+                            // 💡 Add dynamic GREEN glow
+                            resultCircle.style.boxShadow = '0 0 30px #059669, 0 0 60px rgba(5, 150, 105, 0.4)';
+
+                        } else if(score >= 70) {
+                            perfText.textContent = "Excellent";
+                            perfText.style.color = "#10B981"; // Success Green
+                            msgText.textContent = "Great results! To optimize, review your lowest subject grades and ensure high attendance consistency.";
+                            
+                            //  Add dynamic GREEN glow
+                            resultCircle.style.boxShadow = '0 0 30px #10B981, 0 0 60px rgba(16, 185, 129, 0.4)';
+                            
+                        } else if(score >= 50) {
+                            perfText.textContent = "Needs Improvement";
+                            perfText.style.color = "#F59E0B"; // Warning Yellow/Gold
+                            msgText.textContent = "Solid base, but improvement is needed. Increase your dedicated weekly study hours and target a higher attendance rate.";
+                            
+                            // Add dynamic GOLD/YELLOW glow
+                            resultCircle.style.boxShadow = '0 0 30px #F59E0B, 0 0 60px rgba(245, 158, 11, 0.4)';
+                            
+                        } else {
+                            perfText.textContent = "Urgent Focus Required";
+                            perfText.style.color = "#EF4444"; // Danger Red
+                            msgText.textContent = "Your current habits predict difficulty. Prioritize increasing study time drastically and commit to 100% class attendance immediately.";
+                            
+                            //  Add dynamic RED glow
+                            resultCircle.style.boxShadow = '0 0 30px #EF4444, 0 0 60px rgba(239, 68, 68, 0.4)';
+                        }
+                    
+                    
+
+                        perfText.textContent = finalPerfText;
+                        perfText.style.color = glowColor;
+                        msgText.textContent = finalMsgText;
+                        resultCircle.style.setProperty('--glow-color', glowColor);
+                        resultCircle.classList.add('result-circle-glow');
+                    }
+                }, 20); 
+            });
+        });
+    </script>
+
+    </div> 
+    <div class="project-footer">
+        <div class="dev-message mb-2">
+            Project developed by <span class="fw-bold" style="color: var(--primary);">Bishal Khatri</span> with ❤️ <br> This are my networks let's connect:
+        </div>
+        <div class="social-links">
+            
+            <a href="https://github.com/thapabishal" target="_blank" class="social-icon" aria-label="Bishal Khatri GitHub Profile">
+                <i class="fab fa-github"></i>
+            </a>
+            
+            <a href="https://bishalkhatri.info.np/" target="_blank" class="social-icon" aria-label="Bishal Khatri Personal Portfolio">
+                <i class="fas fa-globe"></i>
+            </a>
+            
+            <a href="https://www.linkedin.com/in/yourlinkedinusername" target="_blank" class="social-icon" aria-label="Bishal Khatri LinkedIn Profile">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
